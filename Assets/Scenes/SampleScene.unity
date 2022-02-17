@@ -427,7 +427,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 508282384}
-  - component: {fileID: 508282385}
   - component: {fileID: 508282386}
   m_Layer: 0
   m_Name: SpringArm
@@ -452,21 +451,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 3
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &508282385
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 508282383}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 4342b3da30ebb3d4ea985d42ea3fb7e6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  target: {fileID: 0}
-  mouseSense: 5
-  percentToLerp: 0.2
 --- !u!114 &508282386
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -479,8 +463,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4342b3da30ebb3d4ea985d42ea3fb7e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 1839887080}
+  target: {fileID: 907412344}
+  dollyDis: 10
   mouseSense: 5
+  scrollSense: 2
+  lookOffset: {x: 0, y: 1, z: 0}
   percentToLerp: 0.01
 --- !u!1 &705507993
 GameObject:
@@ -1520,6 +1507,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0fa1822d8bb583042be560d27b10c53d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  cam: {fileID: 1348198934}
   walkSpeed: 5
 --- !u!1 &2084826307
 GameObject:
