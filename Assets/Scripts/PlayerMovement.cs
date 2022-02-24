@@ -26,11 +26,12 @@ public class PlayerMovement : MonoBehaviour
                 float playerYaw = transform.eulerAngles.y;
                 float camYaw = cam.transform.eulerAngles.y;
 
-                //while(camYaw>playerYaw + 180) camYaw -= 360;
-                //while(camYaw<playerYaw - 180) camYaw += 360;
+                while(camYaw>playerYaw + 180) camYaw -= 360;
+                while(camYaw<playerYaw - 180) camYaw += 360;
 
+                Quaternion playerRotation = Quaternion.Euler(0, playerYaw, 0);
                 Quaternion targetRotation = Quaternion.Euler(0, camYaw, 0);
-                transform.rotation = AniMath.Ease(transform.rotation, targetRotation, .01f);
+                transform.rotation = AniMath.Ease(playerRotation, targetRotation, .01f);
             }
         }
 
