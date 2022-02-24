@@ -26,9 +26,9 @@ public class PointAt : MonoBehaviour
     private PlayerTargeting playerTargeting;
     void Start()
     {
-        startRotation = transform.localRotation;
         playerTargeting = GetComponentInParent<PlayerTargeting>();
-        
+        startRotation = transform.localRotation;
+
     }
 
     void Update()
@@ -42,32 +42,23 @@ public class PointAt : MonoBehaviour
         {
             Vector3 vToTarget = playerTargeting.target.transform.position - transform.position;
             
+            vToTarget.Normalize();
 
-            switch(aimOrientation)
-            {
-                case Axis.Forward: fromVector = Vector3.down; break;
-                case Axis.Backward: fromVector = Vector3.up; break;
-                case Axis.Left: fromVector = Vector3.forward; break;
-                case Axis.Right: fromVector = Vector3.back; break;
-                case Axis.Up: fromVector = Vector3.left; break;
-                case Axis.Down: fromVector = Vector3.right; break;
-            }
+            Quaternion worldRot = Quaternion.LookRotation(vToTarget, Vector3.up);
 
-            Quaternion worldRot = Quaternion.FromToRotation(fromVector, vToTarget);
-            Quaternion localRot = worldRot;
-            if(transform.parent) localRot = Quaternion.Inverse(transform.parent.rotation) * worldRot;
-            
+            //convert to local-space:
+            Quaternion localRot = Quaternion.Inverse(transform.parent.rotation) * worldRot;
+
             Vector3 euler = localRot.eulerAngles;
             if(lockAxisX) euler.x = startRotation.eulerAngles.x;
             if(lockAxisY) euler.y = startRotation.eulerAngles.y;
             if(lockAxisZ) euler.z = startRotation.eulerAngles.z;
 
-            localRot.eulerAngles = euler;
-
 
             goalRotation = localRot;
         }
         else goalRotation = startRotation;
+
         transform.localRotation = AniMath.Ease(transform.localRotation, goalRotation, .001f);
     }
 }

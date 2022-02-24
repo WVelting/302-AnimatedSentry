@@ -29,7 +29,8 @@ public static class AniMath
 
     public static Quaternion Lerp(Quaternion a, Quaternion b, float p)
     {
-
+        WrapQuaternion(a, b);
+        
         Quaternion rot = Quaternion.identity;
 
         rot.x = Lerp(a.x, b.x, p);
@@ -58,5 +59,29 @@ public static class AniMath
         if(dt < 0) dt = Time.deltaTime;
         float p = 1 - Mathf.Pow(percentLeftAfter1Second, dt);
         return Lerp(current, target, p);
+    }
+
+    public static float AngleWrapDegrees(float baseAngle, float angleToBeWrapped)
+    {
+        while (baseAngle > angleToBeWrapped + 180) angleToBeWrapped += 360;
+        while(baseAngle < angleToBeWrapped - 180) angleToBeWrapped -= 360;
+
+        return angleToBeWrapped;
+
+    }
+
+    public static Quaternion WrapQuaternion(Quaternion baseAngle, Quaternion angleToBeWrapped)
+    {
+        float alignment = Quaternion.Dot(baseAngle, angleToBeWrapped);
+
+        if(alignment < 0)
+        {
+            angleToBeWrapped.x *= -1;
+            angleToBeWrapped.y *= -1;
+            angleToBeWrapped.z *= -1;
+
+        }
+
+        return angleToBeWrapped;
     }
 }
