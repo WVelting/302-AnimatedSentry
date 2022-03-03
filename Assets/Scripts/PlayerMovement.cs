@@ -18,6 +18,8 @@ public class PlayerMovement : MonoBehaviour
 
     public Transform boneLegLeft;
     public Transform boneLegRight;
+    public Transform boneShoulderLeft;
+    public Transform boneShoulderRight;
     public Transform boneHip;
     public Transform boneSpine;
 
@@ -25,6 +27,7 @@ public class PlayerMovement : MonoBehaviour
     private float velocityVertical = 0;
 
     private float cooldownJumpWindow = 0;
+    private bool movingForward;
     public bool IsGrounded {
         get {
             return pawn.isGrounded || cooldownJumpWindow > 0;
@@ -108,6 +111,9 @@ public class PlayerMovement : MonoBehaviour
         Vector3 axis = Vector3.Cross(Vector3.up, inputDirLocal);
 
         float alignment = Vector3.Dot(inputDirLocal, Vector3.forward);
+        if(alignment == 1) movingForward = true;
+        else movingForward = false;
+        print(movingForward);
         alignment = Mathf.Abs(alignment);
         degrees = AniMath.Lerp(10, 30, alignment);
         
@@ -121,7 +127,28 @@ public class PlayerMovement : MonoBehaviour
         
             float offsetY = Mathf.Sin(Time.time * speed) * .05f;
             if(boneHip) boneHip.localPosition = new Vector3(0, offsetY, 0);
+            if(!targetingScript.playerWantsToAim && alignment == 1)
+            {
+                if(movingForward)
+                {
+                    if(boneShoulderLeft) boneShoulderLeft.localRotation = Quaternion.AngleAxis(-wave+90, axis);
+                    if(boneShoulderRight) boneShoulderRight.localRotation = Quaternion.AngleAxis(wave+90, axis);
+
+                }
+
+                else{
+                    if(boneShoulderLeft) boneShoulderLeft.localRotation = Quaternion.AngleAxis(-wave-90, axis);
+                    if(boneShoulderRight) boneShoulderRight.localRotation = Quaternion.AngleAxis(wave-90, axis);
+
+                }
+            }
         } 
+
+        if(inputDir == Vector3.zero)
+        {
+            float offsetY = Mathf.Sin(Time.time * speed) * .01f;
+            if(boneSpine)boneSpine.localPosition += new Vector3(0, offsetY, 0);
+        }
             
 
     }

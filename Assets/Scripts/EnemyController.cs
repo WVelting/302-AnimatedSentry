@@ -10,6 +10,14 @@ public class EnemyController : MonoBehaviour
     NavMeshAgent agent;
 
     Transform navTarget;
+    public Transform fLeftLeg;
+    public Transform bLeftLeg;
+    public Transform fRightLeg;
+    public Transform bRightLeg;
+
+    public float visionDistance = 10;
+    private bool movingForward;
+    private Vector3 inputDir;
     
     void Start()
     {
@@ -22,13 +30,44 @@ public class EnemyController : MonoBehaviour
 
         navTarget = player.transform;
 
-        if(player) agent.destination = player.transform.position;
         
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(navTarget) agent.destination = navTarget.position;
+        if(navTarget) 
+        {
+            Vector3 vToTarget = navTarget.position - transform.position;
+            float disToTarget = vToTarget.sqrMagnitude;
+            if(disToTarget < (visionDistance*visionDistance)) agent.destination = navTarget.position;
+            else agent.destination = transform.position;
+        }
+    }
+
+    void WalkAnim()
+    {
+        inputDir = transform.forward + transform.right;
+        if(inputDir.sqrMagnitude > 1) inputDir.Normalize();
+
+        float degrees = 30;
+        float speed = 10;
+
+
+        Vector3 inputDirLocal = transform.InverseTransformDirection(inputDir);
+        Vector3 axis = Vector3.Cross(Vector3.up, inputDirLocal);
+
+        float alignment = Vector3.Dot(inputDirLocal, Vector3.forward);
+        if(alignment == 1) movingForward = true;
+        else movingForward = false;
+        alignment = Mathf.Abs(alignment);
+        degrees = AniMath.Lerp(10, 30, alignment);
+        
+        float wave = Mathf.Sin(Time.time * speed) * degrees;
+
+        fLeftLeg.localRotation = Quaternion.AngleAxis(wave, axis);
+        fRightLeg.localRotation = Quaternion.AngleAxis(-wave, axis);
+        bLeftLeg.localRotation = Quaternion.AngleAxis(wave, axis);
+        bRightLeg.localRotation = Quaternion.AngleAxis(-wave, axis);
     }
 }

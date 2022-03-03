@@ -63,7 +63,7 @@ public class CameraController : MonoBehaviour
             //if (yaw> 360) yaw -= 360;
             //if (yaw< 360) yaw += 360;
 
-            pitch = Mathf.Clamp(pitch, -45, 45);
+            pitch = Mathf.Clamp(pitch, -10, 45);
 
 
             transform.rotation = AniMath.Ease(transform.rotation, Quaternion.Euler(pitch, yaw, 0), .005f);
@@ -71,7 +71,7 @@ public class CameraController : MonoBehaviour
 
     
         dollyDis += Input.mouseScrollDelta.y * scrollSense;
-        dollyDis = Mathf.Clamp(dollyDis, 3, 20);
+        dollyDis = Mathf.Clamp(dollyDis, 3, 10);
 
         float tempZ = isAiming? 2 : dollyDis;
 
