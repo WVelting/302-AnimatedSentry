@@ -29,7 +29,7 @@ public static class AniMath
 
     public static Quaternion Lerp(Quaternion a, Quaternion b, float p)
     {
-        WrapQuaternion(a, b);
+        b = WrapQuaternion(a, b);
         
         Quaternion rot = Quaternion.identity;
 
@@ -85,6 +85,7 @@ public static class AniMath
             angleToBeWrapped.x *= -1;
             angleToBeWrapped.y *= -1;
             angleToBeWrapped.z *= -1;
+            angleToBeWrapped.w *= -1;
 
         }
 

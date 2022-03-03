@@ -7,6 +7,7 @@ public class PlayerMovement : MonoBehaviour
 {
 
     CharacterController pawn;
+    PlayerTargeting targetingScript;
     public Camera cam;
     public float walkSpeed = 5;
 
@@ -17,6 +18,8 @@ public class PlayerMovement : MonoBehaviour
 
     public Transform boneLegLeft;
     public Transform boneLegRight;
+    public Transform boneHip;
+    public Transform boneSpine;
 
     private Vector3 inputDir;
     private float velocityVertical = 0;
@@ -32,6 +35,7 @@ public class PlayerMovement : MonoBehaviour
     void Start()
     {
         pawn = GetComponent<CharacterController>();
+        targetingScript = GetComponent<PlayerTargeting>();
     }
 
     void Update()
@@ -42,8 +46,23 @@ public class PlayerMovement : MonoBehaviour
         float v = Input.GetAxisRaw("Vertical");
         float h = Input.GetAxisRaw("Horizontal");
         
+        bool playerIsAiming = (targetingScript && targetingScript.playerWantsToAim && targetingScript.target);
         
-        if(cam) {
+        if(playerIsAiming){
+            
+            Vector3 toTarget = targetingScript.target.transform.position - transform.position;
+            toTarget.Normalize();
+            Quaternion worldRot = Quaternion.LookRotation(toTarget);
+
+            Vector3 euler = worldRot.eulerAngles;
+            euler.x = 0;
+            euler.z = 0;
+            worldRot.eulerAngles = euler;
+
+            transform.rotation = AniMath.Ease(transform.rotation, worldRot, .01f);
+        }
+
+        else if(cam) {
             if(v!=0 || h!= 0){
                 float playerYaw = transform.eulerAngles.y;
                 float camYaw = cam.transform.eulerAngles.y;
@@ -69,11 +88,14 @@ public class PlayerMovement : MonoBehaviour
 
         pawn.Move(moveAmount * Time.deltaTime);
         if(pawn.isGrounded) {
-            velocityVertical = -1;
+            velocityVertical = 0;
             cooldownJumpWindow = .5f;
+            WalkAnim();
+        }
+        else{
+            AirAnim();
         }
 
-        WalkAnim();
     }
 
     void WalkAnim()
@@ -93,6 +115,19 @@ public class PlayerMovement : MonoBehaviour
 
         boneLegLeft.localRotation = Quaternion.AngleAxis(wave, axis);
         boneLegRight.localRotation = Quaternion.AngleAxis(-wave, axis);
+
+        
+        if(inputDir != Vector3.zero){
+        
+            float offsetY = Mathf.Sin(Time.time * speed) * .05f;
+            if(boneHip) boneHip.localPosition = new Vector3(0, offsetY, 0);
+        } 
+            
+
+    }
+
+    void AirAnim()
+    {
 
     }
 }

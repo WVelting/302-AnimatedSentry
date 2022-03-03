@@ -15,18 +15,20 @@ public enum Axis
 public class PointAt : MonoBehaviour
 {
 
+    public Transform target;
+    
     public Axis aimOrientation = Axis.Backward;
-    public bool lockAxisX = false;
-    public bool lockAxisY = false;
-    public bool lockAxisZ = false;
+    
+    public bool lockAxisX = false; 
+    public bool lockAxisY = false; 
+    public bool lockAxisZ = false; 
 
     private Quaternion startRotation;
     private Quaternion goalRotation;
     private Vector3 fromVector = new Vector3();
-    private PlayerTargeting playerTargeting;
+    
     void Start()
     {
-        playerTargeting = GetComponentInParent<PlayerTargeting>();
         startRotation = transform.localRotation;
 
     }
@@ -38,31 +40,28 @@ public class PointAt : MonoBehaviour
 
     private void TurnTowardsTarget()
     {
-        if(playerTargeting && playerTargeting.target && playerTargeting.playerWantsToAim)
+        if(target != null)
         {
-            Vector3 vToTarget = playerTargeting.target.transform.position - transform.position;
+            Vector3 vToTarget = target.position - transform.position;
             
             vToTarget.Normalize();
-            
+
             Quaternion worldRot = Quaternion.LookRotation(vToTarget, Vector3.up);
+            Quaternion localRot = worldRot;
 
-            Quaternion prevRot = transform.rotation;
+            if(transform.parent){
 
-            Vector3 eulerBefore = transform.localEulerAngles;
-            transform.rotation = worldRot;
-            Vector3 eulerAfter = transform.localEulerAngles;
-            transform.rotation = prevRot;
+                //convert to local-space:
+                localRot = Quaternion.Inverse(transform.parent.rotation) * worldRot;
+            }
 
+            Vector3 euler = localRot.eulerAngles;
+            if(lockAxisX) euler.x = startRotation.eulerAngles.x;
+            if(lockAxisY) euler.y = startRotation.eulerAngles.y;
+            if(lockAxisZ) euler.z = startRotation.eulerAngles.z;
+            localRot.eulerAngles = euler;
 
-            //convert to local-space:
-            //Quaternion localRot = Quaternion.Inverse(transform.parent.rotation) * worldRot;
-
-            if(lockAxisX) eulerAfter.x = eulerBefore.x;
-            if(lockAxisY) eulerAfter.y = eulerBefore.y;
-            if(lockAxisZ) eulerAfter.z = eulerBefore.z;
-
-
-            goalRotation = Quaternion.Euler(eulerAfter);
+            goalRotation = localRot;
         }
         else goalRotation = startRotation;
 
