@@ -61,6 +61,12 @@ public static class AniMath
         return Lerp(current, target, p);
     }
 
+    /// <summary>
+    /// Trying to ease between angles > 180 degrees? You need to wrap angles
+    /// </summary>
+    /// < param name = "baseAngle"> This angle won't change
+    /// <param name = "angleToBeWrapped"> this angle will be wrapped
+    /// <returns>The wrapped angle. </return>
     public static float AngleWrapDegrees(float baseAngle, float angleToBeWrapped)
     {
         while (baseAngle > angleToBeWrapped + 180) angleToBeWrapped += 360;

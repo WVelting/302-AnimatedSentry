@@ -7,24 +7,30 @@ public class PlayerTargeting : MonoBehaviour
 
     public float visionDistance = 30;
 
+    [Range(1, 20)]
+    public int roundsPerSecond = 5;
+
+    public Transform boneShoulderRight;
+    public Transform boneShoulderLeft;
+
     public TargetableObject target { get; private set; }
     public bool playerWantsToAim { get; private set; } = false;
+    public bool playerWantsToAttack { get; private set; }
 
     private List<TargetableObject> validTargets = new List<TargetableObject>();
     private float cooldownScan = 0;
     private float cooldownSelect = 0;
+    private float cooldownAttack = 0;
 
-    void Start()
-    {
-
-    }
 
     void Update()
     {
+        playerWantsToAttack = Input.GetButton("Fire1");
         playerWantsToAim = Input.GetButton("Fire2");
 
         cooldownScan -= Time.deltaTime;
         cooldownSelect -= Time.deltaTime;
+        cooldownAttack -= Time.deltaTime;
 
         if (playerWantsToAim)
         {
@@ -35,6 +41,8 @@ public class PlayerTargeting : MonoBehaviour
         else target = null;
 
         print(target);
+
+        DoAttack();
 
     }
 
@@ -65,6 +73,23 @@ public class PlayerTargeting : MonoBehaviour
         //within 180 degrees
         if (alignment > .4f) return true;
         else return false;
+
+    }
+
+    void DoAttack()
+    {
+        if(cooldownAttack > 0) return;
+        if(!playerWantsToAim) return;
+        if(!playerWantsToAttack) return;
+        if(target == null) return;
+        if(!CanSeeThing(target)) return;
+
+        cooldownAttack = 1f / roundsPerSecond;
+
+        //spawn projectiles....
+        //or take health away from target
+        boneShoulderLeft.localEulerAngles += new Vector3(-30, 0, 0);
+        boneShoulderRight.localEulerAngles += new Vector3(-30, 0, 0);
 
     }
 

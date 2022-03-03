@@ -497,7 +497,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4342b3da30ebb3d4ea985d42ea3fb7e6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  target: {fileID: 907412344}
+  player: {fileID: 0}
   dollyDis: 10
   mouseSense: 5
   scrollSense: 2
@@ -1132,14 +1132,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1348198931}
-  m_LocalRotation: {x: 0.1866611, y: -0, z: -0, w: 0.98242444}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0.95, z: -2.08}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 508282384}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 21.516, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!81 &1348198933
 AudioListener:
   m_ObjectHideFlags: 0
@@ -1654,6 +1654,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   cam: {fileID: 1348198934}
   walkSpeed: 5
+  gravMult: -10
+  jumpImpulse: 5
+  boneLegLeft: {fileID: 978638869}
+  boneLegRight: {fileID: 166659466}
 --- !u!114 &1839887083
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1667,6 +1671,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   visionDistance: 10
+  roundsPerSecond: 5
+  boneShoulderRight: {fileID: 301563998}
+  boneShoulderLeft: {fileID: 233930128}
 --- !u!1 &2084826307
 GameObject:
   m_ObjectHideFlags: 0
