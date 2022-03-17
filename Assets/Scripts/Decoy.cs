@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Decoy : MonoBehaviour
 {
-    private float lifeSpan = 5;
+    // private float lifeSpan = 5;
     private int health = 1;
     void Start()
     {
@@ -14,8 +14,8 @@ public class Decoy : MonoBehaviour
     void Update()
     {
         if(health <= 0) Destroy(this.gameObject);
-        lifeSpan -= Time.deltaTime;
-        if(lifeSpan <= 0) Destroy(this.gameObject);
+        // lifeSpan -= Time.deltaTime;
+        // if(lifeSpan <= 0) Destroy(this.gameObject);
     }
 
     public int TakeDamage(int damage)

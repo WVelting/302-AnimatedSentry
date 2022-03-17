@@ -13,6 +13,8 @@ public class PlayerTargeting : MonoBehaviour
     public PointAt boneShoulderRight;
     public PointAt boneShoulderLeft;
     public PointAt boneSpineTop;
+    public GameObject bullet;
+    public Transform gun;
 
     public TargetableObject target { get; private set; }
     public bool playerWantsToAim { get; private set; }
@@ -133,8 +135,8 @@ public class PlayerTargeting : MonoBehaviour
 
         cooldownAttack = 1f / roundsPerSecond;
 
-        //spawn projectiles....
-        //or take health away from target
+        Instantiate(bullet, gun.position, gun.rotation);
+        
         boneShoulderLeft.transform.localEulerAngles += new Vector3(-30, 0, 0);
         boneShoulderRight.transform.localEulerAngles += new Vector3(-30, 0, 0);
 

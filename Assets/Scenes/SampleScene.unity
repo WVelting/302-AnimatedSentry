@@ -138,6 +138,7 @@ GameObject:
   - component: {fileID: 82888958}
   - component: {fileID: 82888959}
   - component: {fileID: 82888960}
+  - component: {fileID: 82888961}
   m_Layer: 0
   m_Name: Sentry
   m_TagString: Untagged
@@ -248,9 +249,14 @@ MonoBehaviour:
   fRightLeg: {fileID: 697141208}
   bRightLeg: {fileID: 1043864184}
   body: {fileID: 1587429443}
-  gunSwivel: {fileID: 0}
+  mechBase: {fileID: 393124238}
+  gunSwivel: {fileID: 1203437199}
+  laser: {fileID: 1925449533119823382, guid: f41852e3e5c59ca4586ec3e4c694cc58, type: 3}
+  gunArm: {fileID: 551779136}
   attackDistance: 10
-  gunTarget: {fileID: 0}
+  visionDistance: 50
+  attackCountdown: 5
+  gunTarget: {fileID: 543792811}
 --- !u!114 &82888960
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -268,6 +274,19 @@ MonoBehaviour:
   lockAxisX: 0
   lockAxisY: 0
   lockAxisZ: 0
+--- !u!114 &82888961
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 82888953}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bed07975d032db74881271ffd5b09cb8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  playerHealth: 100
 --- !u!1 &104889083
 GameObject:
   m_ObjectHideFlags: 0
@@ -494,7 +513,8 @@ Transform:
   m_LocalPosition: {x: 0.086000055, y: 0, z: 0.28900012}
   m_LocalScale: {x: 0.1477642, y: 0.74954677, z: 0.17178959}
   m_ConstrainProportionsScale: 0
-  m_Children: []
+  m_Children:
+  - {fileID: 822607437}
   m_Father: {fileID: 301563998}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -755,6 +775,7 @@ GameObject:
   - component: {fileID: 393124239}
   - component: {fileID: 393124242}
   - component: {fileID: 393124241}
+  - component: {fileID: 393124243}
   m_Layer: 0
   m_Name: Base
   m_TagString: Untagged
@@ -831,6 +852,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 393124238}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &393124243
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 393124238}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 0.99999994, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &508282383
 GameObject:
   m_ObjectHideFlags: 0
@@ -891,6 +925,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 543792810}
+  - component: {fileID: 543792811}
   m_Layer: 0
   m_Name: BONE - GunSwivel
   m_TagString: Untagged
@@ -905,15 +940,32 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 543792809}
-  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 1.6194468, z: 0}
-  m_LocalScale: {x: 0.22786, y: 0.8433275, z: 0.19748}
+  m_LocalScale: {x: 0.22786, y: 0.8433275, z: 0.8697414}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 1203437200}
   m_Father: {fileID: 82888954}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &543792811
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 543792809}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0932f2a50f5838740ad15e124a43c4ab, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  target: {fileID: 0}
+  aimOrientation: 1
+  lockAxisX: 0
+  lockAxisY: 0
+  lockAxisZ: 0
 --- !u!1 &551779136
 GameObject:
   m_ObjectHideFlags: 0
@@ -925,6 +977,7 @@ GameObject:
   - component: {fileID: 551779137}
   - component: {fileID: 551779139}
   - component: {fileID: 551779138}
+  - component: {fileID: 551779140}
   m_Layer: 0
   m_Name: GunArm
   m_TagString: Untagged
@@ -997,6 +1050,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 551779136}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &551779140
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 551779136}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.0000001, y: 0.99999994, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &697141207
 GameObject:
   m_ObjectHideFlags: 0
@@ -1206,6 +1272,37 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 735490430}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!1 &822607436
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 822607437}
+  m_Layer: 0
+  m_Name: Gun
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &822607437
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 822607436}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
+  m_LocalPosition: {x: 0, y: -0.539, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 185801264}
+  m_RootOrder: 0
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!1 &834286459
 GameObject:
   m_ObjectHideFlags: 0
@@ -1772,6 +1869,7 @@ GameObject:
   - component: {fileID: 1203437203}
   - component: {fileID: 1203437202}
   - component: {fileID: 1203437201}
+  - component: {fileID: 1203437204}
   m_Layer: 0
   m_Name: Gun
   m_TagString: Untagged
@@ -1786,14 +1884,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1203437199}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0.7071068, y: 0, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 2.145471, z: 0.30487815}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 543792810}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
 --- !u!65 &1203437201
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -1857,6 +1955,19 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1203437199}
   m_Mesh: {fileID: 10202, guid: 0000000000000000e000000000000000, type: 0}
+--- !u!65 &1203437204
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1203437199}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1.0000001, y: 1.0000004, z: 1.0000001}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1204820786
 GameObject:
   m_ObjectHideFlags: 0
@@ -2514,6 +2625,7 @@ GameObject:
   - component: {fileID: 1587429443}
   - component: {fileID: 1587429442}
   - component: {fileID: 1587429441}
+  - component: {fileID: 1587429444}
   m_Layer: 0
   m_Name: Enemy
   m_TagString: Untagged
@@ -2586,6 +2698,19 @@ Transform:
   m_Father: {fileID: 82888954}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!65 &1587429444
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1587429438}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 2
+  m_Size: {x: 1, y: 2, z: 1}
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &1604348714
 GameObject:
   m_ObjectHideFlags: 0
@@ -3110,6 +3235,8 @@ MonoBehaviour:
   boneShoulderRight: {fileID: 301563999}
   boneShoulderLeft: {fileID: 233930129}
   boneSpineTop: {fileID: 2084826309}
+  bullet: {fileID: 5615506629805660542, guid: a9180a845b4b2824aa6cf4b875f243f3, type: 3}
+  gun: {fileID: 822607437}
 --- !u!208 &1839887084
 NavMeshObstacle:
   m_ObjectHideFlags: 0

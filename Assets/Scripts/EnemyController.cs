@@ -18,13 +18,20 @@ public class EnemyController : MonoBehaviour
     public Transform fRightLeg;
     public Transform bRightLeg;
     public Transform body;
+    public GameObject mechBase;
     public GameObject gunSwivel;
+    public GameObject laser;
+    public GameObject gunArm;
 
     public float attackDistance = 10;
+    public float visionDistance = 50;
+    public float attackCountdown = 10;
     private bool movingForward;
     private Vector3 inputDir;
     private PlayerTargeting player;
     public PointAt gunTarget;
+    private bool isDead = false;
+    private float deathCountdown = 5;
     
     void Start()
     {
@@ -45,32 +52,54 @@ public class EnemyController : MonoBehaviour
     void Update()
     {
 
-        if(navTarget) 
+        if(isDead)
         {
-            Vector3 vToTarget = navTarget.position - transform.position;
-            float disToTarget = vToTarget.sqrMagnitude;
-            target.target = navTarget;
-            if(disToTarget > (attackDistance*attackDistance)) 
-            {
-                agent.destination = navTarget.position;
-                gunTarget.target = null;
-                
-                WalkAnim();
-            }
-            else 
-            {
-                agent.destination = transform.position;
-                
-                gunTarget.target = navTarget;
-                
-            }
+            deathCountdown -= Time.deltaTime;
+            if(deathCountdown<= 0) Destroy(this.gameObject);
         }
+        else
+        {
+            if(navTarget) 
+            {
+                Vector3 vToTarget = navTarget.position - transform.position;
+                float disToTarget = vToTarget.sqrMagnitude;
+                target.target = navTarget;
+                if(disToTarget > (attackDistance*attackDistance)) 
+                {
+                    attackCountdown = 10;
+                    agent.destination = navTarget.position;
+                    gunTarget.target = null;
+                    target.target = player.transform;
+                    
+                    WalkAnim();
+                }
+                else if (disToTarget < (visionDistance*visionDistance))
+                {
+                    agent.destination = transform.position;
+                    target.target = null;
+                    gunTarget.target = navTarget.transform;
+                    attackCountdown -= Time.deltaTime;
+                    if(attackCountdown<=0) 
+                    {
+                        Instantiate(laser, gunTarget.transform.position, gunTarget.transform.localRotation);
+                        attackCountdown = 10;
+                    }
+                    
+                }
+                else
+                {
+                    float offsetY = Mathf.Sin(Time.time * 5) * .0005f;
+                    if(body)body.localPosition += new Vector3(0, offsetY, 0);
+                }
+            }
 
-        Decoy decoy = FindObjectOfType<Decoy>();
-        
+            Decoy decoy = FindObjectOfType<Decoy>();
+            
 
-        if(decoy) navTarget = decoy.transform;
-        else navTarget = player.transform;
+            if(decoy) navTarget = decoy.transform;
+            else navTarget = player.transform;
+
+        }
         
     }
 
@@ -99,5 +128,15 @@ public class EnemyController : MonoBehaviour
         
         float offsetY = Mathf.Sin(Time.time * speed) * .0005f;
         if(body)body.localPosition += new Vector3(0, offsetY, 0);
+    }
+
+    public void EnemyDie()
+    {
+        mechBase.AddComponent<Rigidbody>();
+        gunSwivel.AddComponent<Rigidbody>();
+        body.gameObject.AddComponent<Rigidbody>();
+        gunArm.AddComponent<Rigidbody>();
+        attackCountdown = 100;
+        isDead = true;
     }
 }
