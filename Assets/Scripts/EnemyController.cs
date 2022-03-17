@@ -10,24 +10,31 @@ public class EnemyController : MonoBehaviour
     NavMeshAgent agent;
 
     Transform navTarget;
+    
+
+    public PointAt target;
     public Transform fLeftLeg;
     public Transform bLeftLeg;
     public Transform fRightLeg;
     public Transform bRightLeg;
     public Transform body;
+    public GameObject gunSwivel;
 
-    public float visionDistance = 10;
+    public float attackDistance = 10;
     private bool movingForward;
     private Vector3 inputDir;
+    private PlayerTargeting player;
+    public PointAt gunTarget;
     
     void Start()
     {
         pawn = GetComponent<CharacterController>();
         agent = GetComponent<NavMeshAgent>();
+        
 
         
 
-        PlayerTargeting player = FindObjectOfType<PlayerTargeting>();
+        player = FindObjectOfType<PlayerTargeting>();
 
         navTarget = player.transform;
 
@@ -37,17 +44,34 @@ public class EnemyController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         if(navTarget) 
         {
             Vector3 vToTarget = navTarget.position - transform.position;
             float disToTarget = vToTarget.sqrMagnitude;
-            if(disToTarget < (visionDistance*visionDistance)) 
+            target.target = navTarget;
+            if(disToTarget > (attackDistance*attackDistance)) 
             {
                 agent.destination = navTarget.position;
+                gunTarget.target = null;
+                
                 WalkAnim();
             }
-            else agent.destination = transform.position;
+            else 
+            {
+                agent.destination = transform.position;
+                
+                gunTarget.target = navTarget;
+                
+            }
         }
+
+        Decoy decoy = FindObjectOfType<Decoy>();
+        
+
+        if(decoy) navTarget = decoy.transform;
+        else navTarget = player.transform;
+        
     }
 
     void WalkAnim()

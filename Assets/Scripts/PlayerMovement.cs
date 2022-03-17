@@ -8,6 +8,8 @@ public class PlayerMovement : MonoBehaviour
 
     CharacterController pawn;
     PlayerTargeting targetingScript;
+    PlayerHealthManager health;
+    
     public Camera cam;
     public float walkSpeed = 5;
 
@@ -22,81 +24,116 @@ public class PlayerMovement : MonoBehaviour
     public Transform boneShoulderRight;
     public Transform boneHip;
     public Transform boneSpine;
+    public GameObject decoy;
+    public GameObject head;
 
     private Vector3 inputDir;
     private float velocityVertical = 0;
 
     private float cooldownJumpWindow = 0;
     private bool movingForward;
+    private float speed = 10;
+    private float deathCountdown = 3;
     public bool IsGrounded {
         get {
             return pawn.isGrounded || cooldownJumpWindow > 0;
         }
     }
-
+    private bool isDead = false;
 
     void Start()
     {
         pawn = GetComponent<CharacterController>();
         targetingScript = GetComponent<PlayerTargeting>();
+        health = GetComponent<PlayerHealthManager>();
     }
 
     void Update()
     {
-
-        if(cooldownJumpWindow > 0) cooldownJumpWindow -=Time.deltaTime;
-
-        float v = Input.GetAxisRaw("Vertical");
-        float h = Input.GetAxisRaw("Horizontal");
-        
-        bool playerIsAiming = (targetingScript && targetingScript.playerWantsToAim && targetingScript.target);
-        
-        if(playerIsAiming){
-            
-            Vector3 toTarget = targetingScript.target.transform.position - transform.position;
-            toTarget.Normalize();
-            Quaternion worldRot = Quaternion.LookRotation(toTarget);
-
-            Vector3 euler = worldRot.eulerAngles;
-            euler.x = 0;
-            euler.z = 0;
-            worldRot.eulerAngles = euler;
-
-            transform.rotation = AniMath.Ease(transform.rotation, worldRot, .01f);
-        }
-
-        else if(cam) {
-            if(v!=0 || h!= 0){
-                float playerYaw = transform.eulerAngles.y;
-                float camYaw = cam.transform.eulerAngles.y;
-
-                while(camYaw>playerYaw + 180) camYaw -= 360;
-                while(camYaw<playerYaw - 180) camYaw += 360;
-
-                Quaternion playerRotation = Quaternion.Euler(0, playerYaw, 0);
-                Quaternion targetRotation = Quaternion.Euler(0, camYaw, 0);
-                transform.rotation = AniMath.Ease(playerRotation, targetRotation, .01f);
-            }
-        }
-
-        bool wantsToJump = Input.GetButtonDown("Jump");
-        if(pawn.isGrounded && wantsToJump) velocityVertical = jumpImpulse;
-
-        inputDir = transform.forward * v + transform.right * h;
-        if(inputDir.sqrMagnitude > 1) inputDir.Normalize();
-
-        velocityVertical += gravMult * Time.deltaTime;
-
-        Vector3 moveAmount = inputDir * walkSpeed + Vector3.up * velocityVertical;
-
-        pawn.Move(moveAmount * Time.deltaTime);
-        if(pawn.isGrounded) {
-            velocityVertical = 0;
-            cooldownJumpWindow = .5f;
-            WalkAnim();
-        }
+        if(Input.GetKeyDown(KeyCode.P)) health.playerHealth -= 250;
+        if(health.playerHealth <=0) PlayerDie();
+    
         else{
-            AirAnim();
+
+            if(Input.GetButton("Fire3"))
+            {
+                walkSpeed = 10;
+                boneSpine.localRotation = AniMath.Ease(boneSpine.localRotation, Quaternion.Euler(25, 0, 0), .01f);
+                speed = 20;
+
+            } 
+            else{
+                boneSpine.localRotation = AniMath.Ease(boneSpine.localRotation, Quaternion.identity, .01f);
+                walkSpeed = 5;
+                speed = 10;
+            }
+            bool isDecoy = FindObjectOfType<Decoy>();
+
+            if(cooldownJumpWindow > 0) cooldownJumpWindow -=Time.deltaTime;
+
+            float v = Input.GetAxisRaw("Vertical");
+            float h = Input.GetAxisRaw("Horizontal");
+            
+            bool playerIsAiming = (targetingScript && targetingScript.playerWantsToAim && targetingScript.target);
+            
+            if(playerIsAiming){
+                
+                Vector3 toTarget = targetingScript.target.transform.position - transform.position;
+                toTarget.Normalize();
+                Quaternion worldRot = Quaternion.LookRotation(toTarget);
+
+                Vector3 euler = worldRot.eulerAngles;
+                euler.x = 0;
+                euler.z = 0;
+                worldRot.eulerAngles = euler;
+
+                transform.rotation = AniMath.Ease(transform.rotation, worldRot, .01f);
+            }
+
+            else if(cam) {
+                if(v!=0 || h!= 0){
+                    float playerYaw = transform.eulerAngles.y;
+                    float camYaw = cam.transform.eulerAngles.y;
+
+                    while(camYaw>playerYaw + 180) camYaw -= 360;
+                    while(camYaw<playerYaw - 180) camYaw += 360;
+
+                    Quaternion playerRotation = Quaternion.Euler(0, playerYaw, 0);
+                    Quaternion targetRotation = Quaternion.Euler(0, camYaw, 0);
+                    transform.rotation = AniMath.Ease(playerRotation, targetRotation, .01f);
+                }
+            }
+
+            bool wantsToJump = Input.GetButtonDown("Jump");
+            if(pawn.isGrounded && wantsToJump) velocityVertical = jumpImpulse;
+
+            inputDir = transform.forward * v + transform.right * h;
+            if(inputDir.sqrMagnitude > 1) inputDir.Normalize();
+
+            velocityVertical += gravMult * Time.deltaTime;
+
+            Vector3 moveAmount = inputDir * walkSpeed + Vector3.up * velocityVertical;
+
+            pawn.Move(moveAmount * Time.deltaTime);
+            if(pawn.isGrounded) {
+                velocityVertical = 0;
+                cooldownJumpWindow = .5f;
+                WalkAnim();
+            }
+            
+            
+            
+
+            if(Input.GetButtonDown("Decoy"))
+            {
+                if(!isDecoy)
+                {
+                    Instantiate(decoy, transform.position, transform.rotation);
+                    pawn.Move(transform.right * 5);
+
+                }
+
+            }
         }
 
     }
@@ -104,7 +141,7 @@ public class PlayerMovement : MonoBehaviour
     void WalkAnim()
     {
         float degrees = 30;
-        float speed = 10;
+        
 
 
         Vector3 inputDirLocal = transform.InverseTransformDirection(inputDir);
@@ -155,11 +192,30 @@ public class PlayerMovement : MonoBehaviour
 
     void AirAnim()
     {
+        if(boneShoulderLeft) boneShoulderLeft.localRotation = AniMath.Ease(boneShoulderLeft.localRotation, Quaternion.Euler(35, 0, 0), .01f);
+        if(boneShoulderRight) boneShoulderRight.localRotation = AniMath.Ease(boneShoulderRight.localRotation, Quaternion.Euler(-35, 0, 0), .01f);        
+        if(boneLegLeft) boneLegLeft.localRotation = AniMath.Ease(boneLegLeft.localRotation, Quaternion.Euler(35, 0, 0), .01f);
+        if(boneLegRight) boneLegRight.localRotation = AniMath.Ease(boneLegRight.localRotation, Quaternion.Euler(-35, 0, 0), .01f);
+
 
     }
 
     public void PlayerDie()
     {
+        walkSpeed = 0;
+        transform.localRotation = AniMath.Ease(transform.localRotation, Quaternion.Euler(90,0,0), .05f);
+        if(!isDead)
+        {
+        transform.localPosition -= new Vector3(0, .5f, 0);
+        head.AddComponent<Rigidbody>();
+        isDead = true;
+        }
+        deathCountdown -= Time.deltaTime;
+        if (deathCountdown <= 0) Destroy(this.gameObject);
+        
+        
+        
+        
 
     }
 }
