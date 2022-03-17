@@ -14,6 +14,7 @@ public class EnemyController : MonoBehaviour
     public Transform bLeftLeg;
     public Transform fRightLeg;
     public Transform bRightLeg;
+    public Transform body;
 
     public float visionDistance = 10;
     private bool movingForward;
@@ -40,7 +41,11 @@ public class EnemyController : MonoBehaviour
         {
             Vector3 vToTarget = navTarget.position - transform.position;
             float disToTarget = vToTarget.sqrMagnitude;
-            if(disToTarget < (visionDistance*visionDistance)) agent.destination = navTarget.position;
+            if(disToTarget < (visionDistance*visionDistance)) 
+            {
+                agent.destination = navTarget.position;
+                WalkAnim();
+            }
             else agent.destination = transform.position;
         }
     }
@@ -50,24 +55,25 @@ public class EnemyController : MonoBehaviour
         inputDir = transform.forward + transform.right;
         if(inputDir.sqrMagnitude > 1) inputDir.Normalize();
 
-        float degrees = 30;
-        float speed = 10;
+        float degrees = 10;
+        float speed = 5;
 
 
         Vector3 inputDirLocal = transform.InverseTransformDirection(inputDir);
         Vector3 axis = Vector3.Cross(Vector3.up, inputDirLocal);
 
         float alignment = Vector3.Dot(inputDirLocal, Vector3.forward);
-        if(alignment == 1) movingForward = true;
-        else movingForward = false;
         alignment = Mathf.Abs(alignment);
-        degrees = AniMath.Lerp(10, 30, alignment);
+        degrees = AniMath.Lerp(-10, 10, alignment);
         
         float wave = Mathf.Sin(Time.time * speed) * degrees;
 
-        fLeftLeg.localRotation = Quaternion.AngleAxis(wave, axis);
-        fRightLeg.localRotation = Quaternion.AngleAxis(-wave, axis);
-        bLeftLeg.localRotation = Quaternion.AngleAxis(wave, axis);
-        bRightLeg.localRotation = Quaternion.AngleAxis(-wave, axis);
+        fLeftLeg.localRotation = Quaternion.Euler(-wave, 0, 0);
+        fRightLeg.localRotation = Quaternion.Euler(-wave, 0, 0);
+        bLeftLeg.localRotation = Quaternion.Euler(wave, 0, 0);
+        bRightLeg.localRotation = Quaternion.Euler(wave, 0, 0);
+        
+        float offsetY = Mathf.Sin(Time.time * speed) * .0005f;
+        if(body)body.localPosition += new Vector3(0, offsetY, 0);
     }
 }

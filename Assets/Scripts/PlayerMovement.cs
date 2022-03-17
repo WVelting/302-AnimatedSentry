@@ -157,4 +157,9 @@ public class PlayerMovement : MonoBehaviour
     {
 
     }
+
+    public void PlayerDie()
+    {
+
+    }
 }
