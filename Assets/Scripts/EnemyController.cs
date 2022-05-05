@@ -25,7 +25,7 @@ public class EnemyController : MonoBehaviour
 
     public float attackDistance = 10;
     public float visionDistance = 50;
-    public float attackCountdown = 10;
+    public float attackCountdown = 1;
     private bool movingForward;
     private Vector3 inputDir;
     private PlayerTargeting player;
@@ -66,7 +66,7 @@ public class EnemyController : MonoBehaviour
                 target.target = navTarget;
                 if(disToTarget > (attackDistance*attackDistance)) 
                 {
-                    attackCountdown = 10;
+                    attackCountdown = 1;
                     agent.destination = navTarget.position;
                     gunTarget.target = null;
                     target.target = player.transform;
@@ -82,7 +82,7 @@ public class EnemyController : MonoBehaviour
                     if(attackCountdown<=0) 
                     {
                         Instantiate(laser, gunTarget.transform.position, gunTarget.transform.localRotation);
-                        attackCountdown = 10;
+                        attackCountdown = 1;
                     }
                     
                 }

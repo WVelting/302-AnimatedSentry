@@ -253,9 +253,9 @@ MonoBehaviour:
   gunSwivel: {fileID: 1203437199}
   laser: {fileID: 1925449533119823382, guid: f41852e3e5c59ca4586ec3e4c694cc58, type: 3}
   gunArm: {fileID: 551779136}
-  attackDistance: 10
+  attackDistance: 20
   visionDistance: 50
-  attackCountdown: 5
+  attackCountdown: 1
   gunTarget: {fileID: 543792811}
 --- !u!114 &82888960
 MonoBehaviour:
